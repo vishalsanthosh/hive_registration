@@ -1,60 +1,78 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 
-class RegistrationHive extends StatefulWidget {
-
+class Loginpage extends StatefulWidget{
   @override
-  State<RegistrationHive> createState() => _RegistrationHiveState();
+  State<Loginpage> createState()=> _LoginpageState();
 }
 
-class _RegistrationHiveState extends State<RegistrationHive> {
-  TextEditingController
-   late Box box;
-  String? username;
-  int? password;
+class  _LoginpageState extends State<Loginpage>{
+  late Box box;
+   TextEditingController usernameController =TextEditingController();
+  TextEditingController passwordController =TextEditingController();
+  String _loginmessage="";
   @override
   void initState(){
     super.initState();
-    box=Hive.box("New box");
+    box=Hive.box('mysterybox');
   }
+  void _login(){
+   setState(() {
+     String storedusername=box.get('username');
+     String storedpassword=box.get('password');
 
-  Widget build(BuildContext context) {
+     if(storedusername==usernameController.text && 
+     storedpassword==passwordController.text){
+      _loginmessage="Login successful";
+     }
+     else{
+      _loginmessage="invalid credentials";
+     }
+   });
+  }
+  @override
+  Widget build(BuildContext context){
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text("USERNAME:"),
-            SizedBox(height: 5,),
-            TextField(
-              onTap: (){
-                setState(() {
-                  box.put("username", "");
-                });
+      appBar: AppBar(
+        title: Text("Login Page Example"),
+      ),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(15),
+          child: Column(
+            children: [
+              Text("Username"),
+              SizedBox(height: 20,),
+              SizedBox(
+                height: 100,
+                width: 300,
+                child: TextField(
+                  controller: usernameController,
+                  decoration: InputDecoration(border: OutlineInputBorder()),
+                ),
+              ),
+              SizedBox(height: 50,),
+              Text("password"),
+              SizedBox(height: 20,),
+              SizedBox(
+                height: 100,
+                width: 300,
+                child: TextField(
+                  controller: passwordController,
+                  decoration: InputDecoration(border: OutlineInputBorder()),),
+              ),
+          
+              SizedBox(height: 30,),
+              ElevatedButton(onPressed: (){
+               _login();
               },
-              decoration: InputDecoration(border: OutlineInputBorder(),),
-              
-            ),
-            SizedBox(
-              height: 15,
-        
-            ),
-            Text("PASSWORD:"),
-            SizedBox(height: 5,),
-            TextField(
-              onTap: () {
-                setState(() {
-                  box.put("password", value)
-                });
-              },
-              decoration: InputDecoration(border: OutlineInputBorder()),
-            ),
-            SizedBox(height: 20,),
-            ElevatedButton(onPressed: (){}, child: Text("Register"))
-          ],
+               child: Text("Login")),
+               Text(_loginmessage),
+            ],
+          ),
         ),
       ),
+      
     );
   }
 }
